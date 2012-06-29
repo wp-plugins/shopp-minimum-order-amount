@@ -20,7 +20,7 @@ Once you’ve installed and activated the plugin, there will be a link in the Sh
 
 The plugin will now generate an error message during the Checkout process if the order does not meet the requirements you set. We highly recommend that you notify your customers (via a message on the Shopping Cart page for example) that you have a minimum order requirement, so they’re not surprised when they try to check out.
 
-I’ve got some ideas for improving this plugin down the road, so I’ll be improving it as I have time.
+I’ve got some ideas for improving this plugin down the road, so I’ll be working on it as I have time.
 
 == Installation ==
 
