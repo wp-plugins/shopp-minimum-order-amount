@@ -38,9 +38,8 @@ Nope! This plugin uses the Shopp API from version 1.2 (and later). It *may* work
 
 == Screenshots ==
 
-1. This screen shot description corresponds to screenshot-1.(png|jpg|jpeg|gif). Note that the screenshot is taken from
-the directory of the stable readme.txt, so in this case, `/tags/4.3/screenshot-1.png` (or jpg, jpeg, gif)
-2. This is the second screen shot
+1. Once you’ve installed and activated the plugin, there will be a link in the Shopp > Setup menu where you configure the minimum order values. Set the minimum type you want to use, enter a number, then hit Save and you’re done!
+2. The plugin will now generate an error message during the Checkout process if the order does not meet the requirements you set. We highly recommend that you notify your customers (via a message on the Shopping Cart page for example) that you have a minimum order requirement, so they’re not surprised when they try to check out.
 
 == Changelog ==
 
