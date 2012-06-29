@@ -1,6 +1,6 @@
 === Shopp Minimum Order ===
 Contributors: crunnells
-Donate link: http://chrisrunnells.com/
+Donate link: http://www.chrisrunnells.com/shopp/minimum-order/
 Tags: shopp, minimum order, minimum, order, e-commerce
 Requires at least: 3.0
 Tested up to: 3.4.1
