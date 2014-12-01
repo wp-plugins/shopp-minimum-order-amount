@@ -4,7 +4,7 @@ Plugin Name: Shopp Minimum Order
 Plugin URI: http://www.chrisrunnells.com/shopp/minimum-order-plugin/
 Description: Set a minimum order amount (total items or order total) for Shopp checkout.
 Author: Chris Runnells
-Version: 1.3
+Version: 1.3.1
 Author URI: http://www.chrisrunnells.com
 
 Todo:
@@ -217,19 +217,17 @@ function smo_check_minimums ($valid) {
 	$minimum = get_option('smo_minimum');
 
 	// if type is "total", check against the order subtotal
-	if(isset($type) && !empty($type) && shopp_cart_items_count() > 0){
-		if($type == "total"){
-
-			$Order = ShoppOrder();
-			$Cart = $Order->Cart;
-			$Totals = $Cart->Totals;
-
-			$subtotal = floatval($Totals->subtotal);
-			$minimum = floatval($minimum);
+	if ( isset($type) && !empty($type) && shopp_cart_items_count() > 0){
+		if ( $type == "total" ){
+			$Cart = ShoppOrder()->Cart;
+			$subtotal = $Cart->total('order');
+			$minimum = floatval( $minimum );
  
-			if($subtotal < $minimum){
+			if ( $subtotal < $minimum ){
 				if (SHOPP_DEBUG) new ShoppError('Total minimum: '. $minimum . ' sub-total: '. $subtotal, false, SHOPP_DEBUG_ERR);
-				new ShoppError('The minimum order amount is '.money($minimum).'. Please add more items to complete your order.','cart_validation');
+
+				new ShoppError('The minimum order amount is ' . money($minimum) . '. Please add more items to complete your order.','cart_validation');
+
 				return false;
 			}
 		} else if ($type == "quantity"){
@@ -257,8 +255,10 @@ function smo_cart_minimums (){
 
 	if (SHOPP_DEBUG) new ShoppError('minimum: '. $minimum . ' total: '. shopp('cart','get-total'),false,SHOPP_DEBUG_ERR);
 
-	if(floatval(shopp('cart','get-total')) < $minimum){
-		if (SHOPP_DEBUG) new ShoppError("Minimum is ".money($minimum).", total is " . shopp('cart','get-total'),false,SHOPP_DEBUG_ERR);
+	if ( floatval( shopp('cart','get-total') ) < $minimum ){
+
+		if (SHOPP_DEBUG) new ShoppError("Minimum is " . money($minimum) . ", total is " . shopp('cart','get-total'),false,SHOPP_DEBUG_ERR);
+
 		new ShoppError(__("Cart total does not exceed minimum order amount.","Shopp"));
 	}
 }

@@ -20,7 +20,7 @@ Once you’ve installed and activated the plugin, there will be a link in the Sh
 
 The plugin will now generate an error message during the Checkout process if the order does not meet the requirements you set. We highly recommend that you notify your customers (via a message on the Shopping Cart page for example) that you have a minimum order requirement, so they’re not surprised when they try to check out.
 
-*New Feature:* Version 1.3 supports per-product minimums! Set a minimum quantity for each product independent of the store minimums. 
+*New Feature:* Version 1.3 supports per-product minimums! Set a minimum quantity for each product independent of the store minimums.
 
 I’ve got some ideas for improving this plugin down the road, so I’ll be working on it as I have time.
 
@@ -31,6 +31,7 @@ Installation is pretty straightforward.
 1. Upload the `shopp-minimum-order` folder to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. Set your minimum order amounts on the Setup > Minimum Order page.
+1. Alternatively, in the product editor there’s a box in the right sidebar which allows you to set a minimum quantity.
 
 == Frequently Asked Questions ==
 
