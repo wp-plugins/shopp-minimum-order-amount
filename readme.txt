@@ -46,6 +46,9 @@ Nope! This plugin uses the Shopp API from version 1.3 (and later). It *may* work
 
 == Changelog ==
 
+= 1.3.1 = 
+* Fixed an obvious bug where the order amount minimum was never being satisfied. 
+
 = 1.3 = 
 * Updated to work with Shopp 1.3.x
 * Added support for individual product minimums
