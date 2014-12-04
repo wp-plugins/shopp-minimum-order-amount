@@ -4,7 +4,7 @@ Plugin Name: Shopp Minimum Order
 Plugin URI: http://www.chrisrunnells.com/shopp/minimum-order-plugin/
 Description: Set a minimum order amount (total items or order total) for Shopp checkout.
 Author: Chris Runnells
-Version: 1.3.1
+Version: 1.3.2
 Author URI: http://www.chrisrunnells.com
 
 Todo:
@@ -37,7 +37,7 @@ add_action( 'shopp_product_saved', 'smo_save_postdata' );
 // admin stuff
 add_action('admin_menu', 'smo_menu', 90);
 add_action('admin_menu', 'smo_meta', 20);
-
+add_filter('plugin_action_links', 'smo_plugin_action_links', 10, 2);
 
 
 function smo_menu() {
@@ -55,6 +55,23 @@ function smo_meta() {
 	add_meta_box( 'smo_metabox', 'Set Minimum', 'smo_sidebar', 'shopp_product', 'side', 'default' );
 }
 
+function smo_plugin_action_links($links, $file) {
+    static $this_plugin;
+
+    if (!$this_plugin) {
+        $this_plugin = plugin_basename(__FILE__);
+    }
+
+    if ($file == $this_plugin) {
+        // The "page" query string value must be equal to the slug
+        // of the Settings admin page we defined earlier, which in
+        // this case equals "myplugin-settings".
+        $settings_link = '<a href="' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=shopp-minimum-order">Settings</a>';
+        array_unshift($links, $settings_link);
+    }
+
+    return $links;
+}
 
 function smo_actions() {
 	if($_POST['action'] == 'update'){
