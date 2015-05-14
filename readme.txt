@@ -4,7 +4,7 @@ Donate link: http://www.chrisrunnells.com/shopp/minimum-order/
 Tags: shopp, minimum order, minimum, order, e-commerce
 Requires at least: 3.0
 Tested up to: 4.0.1
-Stable tag: 1.3.2
+Stable tag: 1.3.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,18 +26,18 @@ I’ve got some ideas for improving this plugin down the road, so I’ll be work
 
 == Installation ==
 
-Installation is pretty straightforward. 
+Installation is pretty straightforward.
 
 1. Upload the `shopp-minimum-order` folder to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
-1. Set your minimum order amounts on the Setup > Minimum Order page.
+1. Set your minimum order amounts on the Setup > Minimum Order page.a
 1. Alternatively, in the product editor there’s a box in the right sidebar which allows you to set a minimum quantity.
 
 == Frequently Asked Questions ==
 
 = Will this plugin work in earlier versions of Shopp? =
 
-Nope! This plugin uses the Shopp API from version 1.3 (and later). It *may* work in earlier versions, but it hasn't been tested. 
+Nope! This plugin uses the Shopp API from version 1.3 (and later). It *may* work in earlier versions, but it hasn't been tested.
 
 == Screenshots ==
 
@@ -46,17 +46,20 @@ Nope! This plugin uses the Shopp API from version 1.3 (and later). It *may* work
 
 == Changelog ==
 
+= 1.3.3 =
+* Squashed a bug preventing minimums from being saved in 1.3.x (at the expense of 1.2.x compatibility). Thanks Thomas Bisshop
+
 = 1.3.2 =
 * Added a link to the Settings page from the main Plugins page.
 
-= 1.3.1 = 
-* Fixed an obvious bug where the order amount minimum was never being satisfied. 
+= 1.3.1 =
+* Fixed an obvious bug where the order amount minimum was never being satisfied.
 
-= 1.3 = 
+= 1.3 =
 * Updated to work with Shopp 1.3.x
 * Added support for individual product minimums
 
-= 1.2.1 = 
+= 1.2.1 =
 * Started adding i18l support.
 * Check if there are items in the cart before displaying the "minimum" error message to the customer.
 
