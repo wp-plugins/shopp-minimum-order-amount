@@ -30,7 +30,7 @@ Installation is pretty straightforward.
 
 1. Upload the `shopp-minimum-order` folder to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
-1. Set your minimum order amounts on the Setup > Minimum Order page.a
+1. Set your minimum order amounts on the Setup > Minimum Order page.
 1. Alternatively, in the product editor there’s a box in the right sidebar which allows you to set a minimum quantity.
 
 == Frequently Asked Questions ==

@@ -33,7 +33,7 @@ add_action( 'shopp_cart_updated', 'smo_check_item_minimums' );
 add_action( 'shopp_cart_request', 'smo_check_item_minimums' );
 
 add_action( 'shopp_init_checkout', 'smo_check_minimums' );
-add_action( 'shopp_product_saved', 'smo_save_postdata', 0, 1 );
+add_action( 'shopp_product_saved', 'smo_save_postdata' );
 
 // admin stuff
 add_action('admin_menu', 'smo_menu', 90);
