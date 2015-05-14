@@ -1,20 +1,21 @@
-<?php  
-/* 
+<?php
+/*
 Plugin Name: Shopp Minimum Order
 Plugin URI: http://www.chrisrunnells.com/shopp/minimum-order-plugin/
 Description: Set a minimum order amount (total items or order total) for Shopp checkout.
 Author: Chris Runnells
-Version: 1.3.2
+Version: 1.3.3
 Author URI: http://www.chrisrunnells.com
+
 
 Todo:
 
-- sanitize user inputs, better error checking for input vars
+- sanitize user inputs, better error checking for input vars (eg: make sure no floats are set for quantities)
 - add custom error messages for Cart
 - check if items are in the cart first before displaying error message(s)
 - internationalization
 
-Upcoming: 
+Upcoming:
 - set minimum amounts on specific products
 - allow for BOTH minimum items AND minimum amount?
 - set different minimums for different customer types (eg: wholesale)
@@ -32,7 +33,7 @@ add_action( 'shopp_cart_updated', 'smo_check_item_minimums' );
 add_action( 'shopp_cart_request', 'smo_check_item_minimums' );
 
 add_action( 'shopp_init_checkout', 'smo_check_minimums' );
-add_action( 'shopp_product_saved', 'smo_save_postdata' );
+add_action( 'shopp_product_saved', 'smo_save_postdata', 0, 1 );
 
 // admin stuff
 add_action('admin_menu', 'smo_menu', 90);
@@ -123,7 +124,7 @@ function smo_form( $response = false ) {
   <?php echo $response; ?>
   <form name="smo_form" id="smo_form" method="post" action="<?php echo admin_url('admin.php?page=shopp-minimum-order'); ?>">
 
-	<p>Individual item quantities are not affected by these settings.</p> 
+	<p>Individual item quantities are not affected by these settings.</p>
 
 	<h3><?php echo __('Minimum Type') ?></h3>
 
@@ -139,13 +140,13 @@ function smo_form( $response = false ) {
     <span class="caption">Note: Please just enter a number, do not add currency signs. eg: '35' or '35.00' instead of '$35'.</p>
 
     <!--p><label>Error Message: (coming soon)<br /> <textarea name="smo_message" rows="4" cols="50"><?php echo $message; ?></textarea></label></p-->
-  
-    <p class="submit">  
+
+    <p class="submit">
 	  <input type="hidden" name="action" value="update">
 	  <input class="button-primary" type="submit" name="Submit" value="Save Changes">
-    </p>  
+    </p>
   </form>
-</div>  
+</div>
 
 <?php
 }
@@ -155,7 +156,7 @@ function smo_save(){
 	// sanitize user input
 	$type = sanitize_text_field($_POST['smo_type']);
 	$minimum = (float) $_POST['smo_minimum'];
-	
+
 	update_option('smo_type', $type);
 	update_option('smo_minimum', $minimum);
 
@@ -178,12 +179,10 @@ function smo_sidebar(){
 }
 
 /* Save data from product page meta box */
-function smo_save_postdata( $post_id ) {
-	if ( ! $post_id || ! is_numeric( $post_id ) ) return;
-
-	global $post;
-    $minimum = $_POST['smo_min'];
-    shopp_set_product_meta( $post->ID, 'minimum', $minimum, 'meta' );
+function smo_save_postdata( $Product ) {
+    $minimum = (float) $_POST['smo_min'];
+    if ( ! $minimum ) return;
+    shopp_set_product_meta( $Product->ID, 'minimum', $minimum, 'meta' );
 }
 
 function smo_filter_quantity( $result, $options, $Product ){
@@ -217,7 +216,7 @@ function smo_check_item_minimums ( $Cart ) {
 
 		if ($Item->quantity < $minimum ){
 			// set the quantity to the minimum if it's less
-			$Item->quantity = $minimum; 
+			$Item->quantity = $minimum;
 
 			// drop a cart error to let the customer know what happened
 			new ShoppError(__('The minimum quantity for ' . $Item->name . ' is ' . $minimum . '. Your cart has been updated.', 'Shopp'), false, SHOPP_ERR);
@@ -239,7 +238,7 @@ function smo_check_minimums ($valid) {
 			$Cart = ShoppOrder()->Cart;
 			$subtotal = $Cart->total('order');
 			$minimum = floatval( $minimum );
- 
+
 			if ( $subtotal < $minimum ){
 				if (SHOPP_DEBUG) new ShoppError('Total minimum: '. $minimum . ' sub-total: '. $subtotal, false, SHOPP_DEBUG_ERR);
 
@@ -248,15 +247,15 @@ function smo_check_minimums ($valid) {
 				return false;
 			}
 		} else if ($type == "quantity"){
-			
+
 			$total_items = shopp('cart', 'get-total-quantity');
-			
+
 			if($total_items < $minimum){
 				if (SHOPP_DEBUG) new ShoppError('Quantity minimum: '. $minimum . ' total items: '. $total_items, false, SHOPP_DEBUG_ERR);
 				new ShoppError('You must have at least '. $minimum .' items in your cart to check out. You currently have '. $total_items .' items.', 'cart_validation');
 				return false;
 			}
-			
+
 		}
 	}
 
@@ -280,15 +279,15 @@ function smo_cart_minimums (){
 	}
 }
 
-/* 
+/*
  * Shopp apparently returns an empty array if no meta record is found (instead of null)
  * so we have to check for that and return false
  */
 function smo_get_minimum ( $id ) {
 	if ( ! is_numeric($id) ) return;
-	
+
 	$min = shopp_product_meta($id, 'minimum', 'meta');
-	
+
 	if ( ! empty( $min ) ) return $min;
 
 }
