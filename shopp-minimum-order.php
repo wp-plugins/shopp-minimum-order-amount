@@ -4,7 +4,7 @@ Plugin Name: Shopp Minimum Order
 Plugin URI: http://www.chrisrunnells.com/shopp/minimum-order-plugin/
 Description: Set a minimum order amount (total items or order total) for Shopp checkout.
 Author: Chris Runnells
-Version: 1.3.3
+Version: 1.3.4
 Author URI: http://www.chrisrunnells.com
 
 
@@ -36,62 +36,51 @@ add_action( 'shopp_init_checkout', 'smo_check_minimums' );
 add_action( 'shopp_product_saved', 'smo_save_postdata' );
 
 // admin stuff
-add_action('admin_menu', 'smo_menu', 90);
-add_action('admin_menu', 'smo_meta', 20);
-add_filter('plugin_action_links', 'smo_plugin_action_links', 10, 2);
+add_action( 'admin_menu', 'smo_menu', 90 );
+add_action( 'admin_menu', 'smo_meta', 20 );
+add_filter( 'plugin_action_links', 'smo_plugin_action_links', 10, 2 );
 
 
-function smo_menu() {
-	// Shopp 1.2 menu position
-	// add_submenu_page('shopp-settings',__('Minimum Order'),__('Minimum Order'),'manage_options','shopp-minimum-order','smo_actions');
-
+function smo_menu () {
 	// Shopp 1.3
-	// shopp_admin_add_submenu ( string $label, string $page, string $menu = null, $handler = false, string $access = null )
-	// shopp_admin_add_submenu( 'Minimum Order', 'shopp-setup-minimum', 'shopp-setup', 'smo_actions', 'shopp_settings' );
-
 	add_submenu_page( 'shopp-orders', 'Minimum Order', 'Minimum Order', 'manage_options', 'shopp-minimum-order', 'smo_actions' );
 }
 
-function smo_meta() {
+function smo_meta () {
 	add_meta_box( 'smo_metabox', 'Set Minimum', 'smo_sidebar', 'shopp_product', 'side', 'default' );
 }
 
-function smo_plugin_action_links($links, $file) {
+function smo_plugin_action_links ( $links, $file ) {
     static $this_plugin;
 
-    if (!$this_plugin) {
-        $this_plugin = plugin_basename(__FILE__);
-    }
+    if ( ! $this_plugin )
+    	$this_plugin = plugin_basename( __FILE__ );
 
-    if ($file == $this_plugin) {
-        // The "page" query string value must be equal to the slug
-        // of the Settings admin page we defined earlier, which in
-        // this case equals "myplugin-settings".
+    if ( $file == $this_plugin ) {
+        // The "page" query string value must be equal to the slug of the Settings admin page
         $settings_link = '<a href="' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=shopp-minimum-order">Settings</a>';
-        array_unshift($links, $settings_link);
+        array_unshift( $links, $settings_link );
     }
 
     return $links;
 }
 
-function smo_actions() {
-	if($_POST['action'] == 'update'){
+function smo_actions () {
+	if ( $_POST['action'] == 'update' ) {
 		smo_save();
 	} else {
 		smo_form();
 	}
 }
 
-function smo_form( $response = false ) {
+function smo_form ( $response = false ) {
 
-	$type = get_option('smo_type');
-	$minimum = get_option('smo_minimum');
+	$type = get_option( 'smo_type' );
+	$minimum = get_option( 'smo_minimum' );
 
-	$selected[0] = "";
-	$selected[1] = "";
-	$selected[2] = "";
+	$selected = array( '', '', '' );
 
-	if(isset($type)){
+	if ( isset( $type ) ) {
 		if($type == "quantity") $selected[0] = ' checked="checked"';
 		if($type == "total") $selected[1] = ' checked="checked"';
 		if($type == "") $selected[2] = ' checked="checked"';
@@ -99,13 +88,12 @@ function smo_form( $response = false ) {
 		$checked[2] = ' checked="checked"';
 	}
 
-	if($response){
+	if ( $response )
 		$response = '<div id="message" class="updated fade"><p>'.$response.'</p></div>';
-	}
 
-	if ('SHOPP_VERSION' < '1.2'){
-		$response .= '<div id="message" class="updated fade"><p>'. sprintf(__('This plugin has only been tested in Shopp version 1.3 and greater. Your current version is %d and we recommend upgrading.'), SHOPP_VERSION) .'</p></div>';
-	}
+	if ( defined('SHOPP_VERSION') && version_compare(SHOPP_VERSION, "1.3", "<") ) // 1.2
+		$response .= '<div id="message" class="updated fade"><p>'. sprintf(__('This plugin has only been tested in Shopp version 1.3 and greater. Your current version is %d and we recommend upgrading to the latest version of Shopp.'), SHOPP_VERSION) .'</p></div>';
+
 ?>
 <style type="text/css">
 #smo_form label {
@@ -152,7 +140,7 @@ function smo_form( $response = false ) {
 }
 
 
-function smo_save(){
+function smo_save () {
 	// sanitize user input
 	$type = sanitize_text_field($_POST['smo_type']);
 	$minimum = (float) $_POST['smo_minimum'];
@@ -164,7 +152,7 @@ function smo_save(){
 }
 
 /* Meta box sidebar on the product page */
-function smo_sidebar(){
+function smo_sidebar () {
 	global $post;
 
 	// minimum saved to shopp_product_meta()
@@ -179,31 +167,33 @@ function smo_sidebar(){
 }
 
 /* Save data from product page meta box */
-function smo_save_postdata( $Product ) {
+function smo_save_postdata ( $Product ) {
     $minimum = (float) $_POST['smo_min'];
     if ( ! $minimum ) return;
     shopp_set_product_meta( $Product->ID, 'minimum', $minimum, 'meta' );
 }
 
-function smo_filter_quantity( $result, $options, $Product ){
+function smo_filter_quantity ( $result, $options, $Product ) {
 	// check if this product has a minimum
 	$minimum = smo_get_minimum($Product->id);
-	shopp_debug("Check catalog product: " . print_r($minimum, true));
+ 	shopp_debug("Check catalog product: " . print_r($minimum, true));
 
 	// if it does, try to set the minimum in the dropdown OR text area input (soon)
-
+	return $result;
 }
 
 function smo_check_added_item ( $Item ) {
 	// check if this item has minimums
 	$minimum = smo_get_minimum($Item->product);
-	shopp_debug("Check added item minimum: " . print_r($minimum, true));
+	if ( empty( $minimum ) ) return;
 
-	// if it does, set the quantity to minimum if it's less
-	if ($Item->quantity < $minimum) $Item->quantity = $minimum;
-
-	// drop a cart error to let the customer know what happened
-	// new ShoppError(__('The minimum quantity for this product is:','Shopp'),false,SHOPP_ERR);
+	shopp_debug( "Check added item minimum: " . print_r($minimum, true) );
+	// set the quantity to the minimum if it's less
+	if ( $Item->quantity < $minimum ) {
+		$Item->quantity = $minimum;
+		// drop a cart error to let the customer know what happened
+		shopp_add_notice('The minimum quantity for ' . $Item->name . ' is ' . $minimum . '. Your cart has been updated.');
+	}
 }
 
 function smo_check_item_minimums ( $Cart ) {
@@ -219,39 +209,40 @@ function smo_check_item_minimums ( $Cart ) {
 			$Item->quantity = $minimum;
 
 			// drop a cart error to let the customer know what happened
-			new ShoppError(__('The minimum quantity for ' . $Item->name . ' is ' . $minimum . '. Your cart has been updated.', 'Shopp'), false, SHOPP_ERR);
+			// new ShoppError(__('The minimum quantity for ' . $Item->name . ' is ' . $minimum . '. Your cart has been updated.', 'Shopp'), false, SHOPP_ERR);
+			shopp_add_notice('The minimum quantity for ' . $Item->name . ' is ' . $minimum . '. Your cart has been updated.');
 		}
 
 	}
 
 }
 
-function smo_check_minimums ($valid) {
+function smo_check_minimums ( $valid ) {
 	global $Shopp;
 
 	$type = get_option('smo_type');
 	$minimum = get_option('smo_minimum');
 
 	// if type is "total", check against the order subtotal
-	if ( isset($type) && !empty($type) && shopp_cart_items_count() > 0){
-		if ( $type == "total" ){
+	if ( isset($type) && !empty($type) && shopp_cart_items_count() > 0 ) {
+		if ( $type == "total" ) {
 			$Cart = ShoppOrder()->Cart;
 			$subtotal = $Cart->total('order');
 			$minimum = floatval( $minimum );
 
 			if ( $subtotal < $minimum ){
-				if (SHOPP_DEBUG) new ShoppError('Total minimum: '. $minimum . ' sub-total: '. $subtotal, false, SHOPP_DEBUG_ERR);
+				shopp_debug('Total minimum: '. $minimum . ' sub-total: '. $subtotal );
 
 				new ShoppError('The minimum order amount is ' . money($minimum) . '. Please add more items to complete your order.','cart_validation');
 
 				return false;
 			}
-		} else if ($type == "quantity"){
+		} else if ( $type == "quantity" ) {
 
 			$total_items = shopp('cart', 'get-total-quantity');
 
-			if($total_items < $minimum){
-				if (SHOPP_DEBUG) new ShoppError('Quantity minimum: '. $minimum . ' total items: '. $total_items, false, SHOPP_DEBUG_ERR);
+			if ( $total_items < $minimum ) {
+				shopp_debug('Quantity minimum: '. $minimum . ' total items: '. $total_items);
 				new ShoppError('You must have at least '. $minimum .' items in your cart to check out. You currently have '. $total_items .' items.', 'cart_validation');
 				return false;
 			}
@@ -263,19 +254,19 @@ function smo_check_minimums ($valid) {
 	return true;
 }
 
-// Checks during checkout if minimum ahas been met
-function smo_cart_minimums (){
-	global $Shopp;
+// Checks during checkout if minimum has been met
+function smo_cart_minimums () {
 
 	$minimum = get_option('smo_minimum');
 
-	if (SHOPP_DEBUG) new ShoppError('minimum: '. $minimum . ' total: '. shopp('cart','get-total'),false,SHOPP_DEBUG_ERR);
+	shopp_debug('minimum: '. $minimum . ' total: ' . shopp('cart.get-total'));
 
-	if ( floatval( shopp('cart','get-total') ) < $minimum ){
+	if ( floatval( shopp('cart.get-total') ) < $minimum ){
 
-		if (SHOPP_DEBUG) new ShoppError("Minimum is " . money($minimum) . ", total is " . shopp('cart','get-total'),false,SHOPP_DEBUG_ERR);
+		shopp_debug("Minimum is " . money($minimum) . ", total is " . shopp('cart.get-total'));
 
-		new ShoppError(__("Cart total does not exceed minimum order amount.","Shopp"));
+		// new ShoppError(__("Cart total does not exceed minimum order amount.","Shopp"));
+		shopp_add_error("Cart total does not exceed minimum order amount.");
 	}
 }
 

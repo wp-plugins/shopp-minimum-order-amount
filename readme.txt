@@ -4,7 +4,7 @@ Donate link: http://www.chrisrunnells.com/shopp/minimum-order/
 Tags: shopp, minimum order, minimum, order, e-commerce
 Requires at least: 3.0
 Tested up to: 4.0.1
-Stable tag: 1.3.3
+Stable tag: 1.3.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -45,6 +45,9 @@ Nope! This plugin uses the Shopp API from version 1.3 (and later). It *may* work
 2. The plugin will now generate an error message during the Checkout process if the order does not meet the requirements you set. We highly recommend that you notify your customers (via a message on the Shopping Cart page for example) that you have a minimum order requirement, so they’re not surprised when they try to check out.
 
 == Changelog ==
+
+= 1.3.4 =
+* Squashed a couple of sneaky (but dumb) bugs. One was hiding the quantity select box on product pages, and the other was just silly.
 
 = 1.3.3 =
 * Squashed a bug preventing minimums from being saved in 1.3.x (at the expense of 1.2.x compatibility). Thanks Thomas Bisshop
